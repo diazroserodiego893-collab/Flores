@@ -296,12 +296,13 @@
         this.planeGeometry = new Plane(this.gl, { heightSegments: 50, widthSegments: 100 });
       }
       createMedias(items, bend, textColor, borderRadius) {
-        const defaultItems = [
-          { image: 'https://picsum.photos/id/106/800/600', text: 'Flores Brillantes' },
-          { image: 'https://picsum.photos/id/152/800/600', text: 'Flores Amarillas' },
-          { image: 'https://picsum.photos/id/306/800/600', text: 'Sol y Naturaleza' },
-          { image: 'https://picsum.photos/id/319/800/600', text: 'Detalle Especial' },
-          { image: 'https://picsum.photos/id/403/800/600', text: 'Girasoles' }
+const defaultItems = [
+  { image: './aesthetic sunflower wallpaper 💕 🌻 💫 .jpg', text: 'Flores Amarillas 💛' },
+  { image: './Descargar (1).jpg', text: 'Para Tina ✨' },
+  { image: './Descargar (2).jpg', text: 'Un Momento Especial 🌻' },
+  { image: './Descargar (3).jpg', text: 'Sonrisas 🌼' },
+  { image: './💫.jpg', text: 'Con Amor 💛' }
+];
         ];
         const galleryItems = items && items.length ? items : defaultItems;
         this.mediasImages = galleryItems.concat(galleryItems);
