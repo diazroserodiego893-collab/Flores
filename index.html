@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flores Amarillas - Galería Circular</title>
   
-  <!-- Librerías externas: TailwindCSS y OGL para el motor 3D -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/ogl"></script>
   
-  <!-- Estilos de animación y cursor -->
   <style>
     .circular-gallery {
       width: 100%;
@@ -32,7 +30,7 @@
 <body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between font-sans relative overflow-x-hidden">
 
   <!-- ================================================================= -->
-  <!-- 1. ENCABEZADO Y TÍTULOS (Cambia los textos de la pantalla aquí)  -->
+  <!-- 1. ENCABEZADO Y TÍTULOS                                           -->
   <!-- ================================================================= -->
   <header class="text-center pt-8 px-4 z-10">
     <div class="animate-float inline-block mb-2">
@@ -46,49 +44,35 @@
     </p>
   </header>
 
-  <!-- Contenedor donde renderiza la galería 3D -->
   <main class="w-full flex-1 my-4">
     <div id="gallery-container" style="height: 550px; position: relative;" class="w-full"></div>
   </main>
 
-  <!-- Pie de página -->
   <footer class="py-4 text-center text-slate-600 text-xs font-semibold">
-    Creado por Diego Diaz1 💛
+    Creado con React Bits 💛
   </footer>
 
-
   <!-- ================================================================= -->
-  <!-- 2. VENTANA EMERGENTE / MODAL DE LA CARTA                        -->
-  <!-- (Aquí puedes cambiar el diseño o la firma del mensaje)             -->
+  <!-- 2. VENTANA EMERGENTE / MODAL DE LA CARTA                          -->
   <!-- ================================================================= -->
   <div id="letter-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-300 opacity-0">
     <div class="bg-amber-50 text-slate-800 max-w-md w-full rounded-2xl p-6 md:p-8 shadow-2xl border-4 border-amber-300 relative transform scale-95 transition-transform duration-300" id="modal-card">
-      
-      <!-- Botón de cerrar (X) -->
       <button id="close-btn" class="absolute top-3 right-4 text-slate-400 hover:text-slate-700 text-2xl font-bold">&times;</button>
-      
-      <!-- Icono y Título dentro de la carta -->
       <div class="text-center mb-4">
         <span class="text-4xl">💌</span>
         <h2 id="card-title" class="text-2xl font-bold text-amber-700 mt-2">Para Tina</h2>
       </div>
-
-      <!-- Texto del mensaje que cambia según la foto -->
       <p id="card-message" class="text-slate-700 leading-relaxed text-center font-serif text-lg my-4">
         Mensaje...
       </p>
-
-      <!-- Firma al pie de la carta -->
       <div class="text-right mt-6">
         <span class="text-amber-600 font-semibold italic text-sm">Con todo mi cariño 💛</span>
       </div>
-
     </div>
   </div>
 
-
   <!-- ================================================================= -->
-  <!-- 3. CÓDIGO JAVASCRIPT (LÓGICA Y PROGRAMACIÓN DE LA GALERÍA)       -->
+  <!-- 3. CÓDIGO JAVASCRIPT DE LA GALERÍA                                 -->
   <!-- ================================================================= -->
   <script>
     const { Renderer, Camera, Transform, Plane, Mesh, Program, Texture } = OGL;
@@ -340,38 +324,37 @@
       }
 
       /* ================================================================= */
-      /* 4. LISTA DE FOTOS Y MENSAJES (¡EDITA AQUÍ TUS FOTOS Y CARTAS!)    */
+      /* 4. LISTA DE FOTOS Y MENSAJES (IMGUR LINKS)                        */
       /* ================================================================= */
       createMedias(items, bend, textColor, borderRadius) {
-        
-const defaultItems = [
-const defaultItems = [
-  { 
-    image: 'https://i.imgur.com/v8pEGB1.jpeg', 
-    text: 'Flores Amarillas 💛',
-    letter: 'Que este detalle de flores amarillas te recuerde lo especial que eres todos los días. 🌻' 
-  },
-  { 
-    image: 'https://i.imgur.com/rN5EwE4.jpeg', 
-    text: 'Para Tina ✨',
-    letter: 'Tu sonrisa ilumina cualquier día gris. Gracias por estar siempre ahí. ❤️' 
-  },
-  { 
-    image: 'https://i.imgur.com/YwKqVbS.jpeg', 
-    text: 'Un Momento Especial 🌻',
-    letter: 'Cada pequeño instante a tu lado se convierte en un gran recuerdo que guardo con cariño.' 
-  },
-  { 
-    image: 'https://i.imgur.com/tH7eNq2.jpeg', 
-    text: 'Sonrisas 🌼',
-    letter: 'Nunca dejes de sonreír, tienes la energía más bonita del mundo.' 
-  },
-  { 
-    image: 'https://i.imgur.com/kP8k7yO.jpeg', 
-    text: 'Con Amor 💛',
-    letter: 'Un pequeño espacio digital pensado especialmente para sacarte una sonrisa hoy.' 
-  }
-];
+        const defaultItems = [
+          { 
+            image: 'https://i.imgur.com/v8pEGB1.jpeg', 
+            text: 'Flores Amarillas 💛',
+            letter: 'Que este detalle de flores amarillas te recuerde lo especial que eres todos los días. 🌻' 
+          },
+          { 
+            image: 'https://i.imgur.com/rN5EwE4.jpeg', 
+            text: 'Para Tina ✨',
+            letter: 'Tu sonrisa ilumina cualquier día gris. Gracias por estar siempre ahí. ❤️' 
+          },
+          { 
+            image: 'https://i.imgur.com/YwKqVbS.jpeg', 
+            text: 'Un Momento Especial 🌻',
+            letter: 'Cada pequeño instante a tu lado se convierte en un gran recuerdo que guardo con cariño.' 
+          },
+          { 
+            image: 'https://i.imgur.com/tH7eNq2.jpeg', 
+            text: 'Sonrisas 🌼',
+            letter: 'Nunca dejes de sonreír, tienes la energía más bonita del mundo.' 
+          },
+          { 
+            image: 'https://i.imgur.com/kP8k7yO.jpeg', 
+            text: 'Con Amor 💛',
+            letter: 'Un pequeño espacio digital pensado especialmente para sacarte una sonrisa hoy.' 
+          }
+        ];
+
         const galleryItems = items && items.length ? items : defaultItems;
         this.mediasImages = galleryItems.concat(galleryItems);
         this.medias = this.mediasImages.map((data, index) => new Media({
@@ -391,7 +374,6 @@ const defaultItems = [
         }));
       }
 
-      /* Controles de arrastrar y clic */
       onTouchDown(e) {
         this.isDown = true;
         this.scroll.position = this.scroll.current;
@@ -469,7 +451,6 @@ const defaultItems = [
       }
     }
 
-
     /* ================================================================= */
     /* 5. ABRIR Y CERRAR LA VENTANA EMERGENTE                            */
     /* ================================================================= */
@@ -504,7 +485,6 @@ const defaultItems = [
       if (e.target === modal) closeLetter();
     });
 
-    /* Inicializar la aplicación */
     document.addEventListener('DOMContentLoaded', () => {
       const container = document.getElementById('gallery-container');
       container.classList.add('circular-gallery');
