@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flores Amarillas - Galería Circular</title>
   
-  <!-- Carga de Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Librería OGL para renderizado 3D -->
   <script src="https://unpkg.com/ogl"></script>
   
   <style>
@@ -32,7 +29,6 @@
 </head>
 <body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between font-sans">
 
-  <!-- Encabezado / Menú -->
   <header class="text-center pt-8 px-4 z-10">
     <div class="animate-float inline-block mb-2">
       <span class="text-6xl">🌻</span>
@@ -41,20 +37,18 @@
       Flores Amarillas
     </h1>
     <p class="text-slate-400 text-sm md:text-base">
-      Arrastra horizontalmente o usa la rueda del ratón para explorar la galería 3D.
+      Arrastra horizontalmente para explorar la galería 3D.
     </p>
   </header>
 
-  <!-- Contenedor donde se dibuja la galería circular -->
   <main class="w-full flex-1 my-4">
     <div id="gallery-container" style="height: 550px; position: relative;" class="w-full"></div>
   </main>
 
   <footer class="py-4 text-center text-slate-600 text-xs font-semibold">
-    Creado con React Bits & OGL 💛
+    Creado con React Bits 💛
   </footer>
 
-  <!-- Script con el motor gráfico de Circular Gallery -->
   <script>
     const { Renderer, Camera, Transform, Plane, Mesh, Program, Texture } = OGL;
 
@@ -91,7 +85,7 @@
         this.createMesh();
       }
       createMesh() {
-        const { texture, width, height } = createTextTexture(this.gl, this.text, 'bold 30px Figtree, sans-serif', this.textColor);
+        const { texture, width, height } = createTextTexture(this.gl, this.text, 'bold 30px sans-serif', this.textColor);
         const geometry = new Plane(this.gl);
         const program = new Program(this.gl, {
           vertex: `
@@ -271,7 +265,7 @@
     }
 
     class App {
-      constructor(container, { items, bend = 3, textColor = '#f59e0b', borderRadius = 0.05, scrollSpeed = 2, scrollEase = 0.05 } = {}) {
+      constructor(container, { items, bend = 3, textColor = '#fbbf24', borderRadius = 0.05, scrollSpeed = 2, scrollEase = 0.05 } = {}) {
         this.container = container;
         this.scrollSpeed = scrollSpeed;
         this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
@@ -303,11 +297,11 @@
       }
       createMedias(items, bend, textColor, borderRadius) {
         const defaultItems = [
-          { image: 'https://images.unsplash.com/photo-1592150621744-aca64f48394a?auto=format&fit=crop&w=800&q=80', text: 'Girasoles' },
-          { image: 'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?auto=format&fit=crop&w=800&q=80', text: 'Tulipanes Amarillos' },
-          { image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80', text: 'Luz de Sol' },
-          { image: 'https://images.unsplash.com/photo-1470058869958-2a77ade41c02?auto=format&fit=crop&w=800&q=80', text: 'Naturaleza' },
-          { image: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=800&q=80', text: 'Detalles Especiales' }
+          { image: 'https://picsum.photos/id/106/800/600', text: 'Flores Brillantes' },
+          { image: 'https://picsum.photos/id/152/800/600', text: 'Flores Amarillas' },
+          { image: 'https://picsum.photos/id/306/800/600', text: 'Sol y Naturaleza' },
+          { image: 'https://picsum.photos/id/319/800/600', text: 'Detalle Especial' },
+          { image: 'https://picsum.photos/id/403/800/600', text: 'Girasoles' }
         ];
         const galleryItems = items && items.length ? items : defaultItems;
         this.mediasImages = galleryItems.concat(galleryItems);
@@ -374,7 +368,6 @@
       }
     }
 
-    // Inicializar el componente en la página
     document.addEventListener('DOMContentLoaded', () => {
       const container = document.getElementById('gallery-container');
       container.classList.add('circular-gallery');
