@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flores Amarillas - Galería Circular</title>
   
+  <!-- Librerías externas: TailwindCSS y OGL para el motor 3D -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/ogl"></script>
   
+  <!-- Estilos de animación y cursor -->
   <style>
     .circular-gallery {
       width: 100%;
@@ -27,8 +29,11 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between font-sans">
+<body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between font-sans relative overflow-x-hidden">
 
+  <!-- ================================================================= -->
+  <!-- 1. ENCABEZADO Y TÍTULOS (Cambia los textos de la pantalla aquí)  -->
+  <!-- ================================================================= -->
   <header class="text-center pt-8 px-4 z-10">
     <div class="animate-float inline-block mb-2">
       <span class="text-6xl">🌻</span>
@@ -37,18 +42,54 @@
       Flores Amarillas
     </h1>
     <p class="text-slate-400 text-sm md:text-base">
-      Arrastra horizontalmente para explorar la galería 3D.
+      Arrastra para explorar. ¡Haz clic en una foto para leer una cartita! 💌
     </p>
   </header>
 
+  <!-- Contenedor donde renderiza la galería 3D -->
   <main class="w-full flex-1 my-4">
     <div id="gallery-container" style="height: 550px; position: relative;" class="w-full"></div>
   </main>
 
+  <!-- Pie de página -->
   <footer class="py-4 text-center text-slate-600 text-xs font-semibold">
     Creado con React Bits 💛
   </footer>
 
+
+  <!-- ================================================================= -->
+  <!-- 2. VENTANA EMERGENTE / MODAL DE LA CARTA                        -->
+  <!-- (Aquí puedes cambiar el diseño o la firma del mensaje)             -->
+  <!-- ================================================================= -->
+  <div id="letter-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-300 opacity-0">
+    <div class="bg-amber-50 text-slate-800 max-w-md w-full rounded-2xl p-6 md:p-8 shadow-2xl border-4 border-amber-300 relative transform scale-95 transition-transform duration-300" id="modal-card">
+      
+      <!-- Botón de cerrar (X) -->
+      <button id="close-btn" class="absolute top-3 right-4 text-slate-400 hover:text-slate-700 text-2xl font-bold">&times;</button>
+      
+      <!-- Icono y Título dentro de la carta -->
+      <div class="text-center mb-4">
+        <span class="text-4xl">💌</span>
+        <h2 id="card-title" class="text-2xl font-bold text-amber-700 mt-2">Para Tina</h2>
+      </div>
+
+      <!-- Texto del mensaje que cambia según la foto -->
+      <p id="card-message" class="text-slate-700 leading-relaxed text-center font-serif text-lg my-4">
+        Mensaje...
+      </p>
+
+      <!-- Firma al pie de la carta -->
+      <div class="text-right mt-6">
+        <span class="text-amber-600 font-semibold italic text-sm">Con todo mi cariño 💛</span>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ================================================================= -->
+  <!-- 3. CÓDIGO JAVASCRIPT (LÓGICA Y PROGRAMACIÓN DE LA GALERÍA)       -->
+  <!-- ================================================================= -->
   <script>
     const { Renderer, Camera, Transform, Plane, Mesh, Program, Texture } = OGL;
 
@@ -123,7 +164,7 @@
     }
 
     class Media {
-      constructor({ geometry, gl, image, index, length, scene, screen, text, viewport, bend, textColor, borderRadius = 0.05 }) {
+      constructor({ geometry, gl, image, index, length, scene, screen, text, letter, viewport, bend, textColor, borderRadius = 0.05 }) {
         this.extra = 0;
         this.geometry = geometry;
         this.gl = gl;
@@ -133,6 +174,7 @@
         this.scene = scene;
         this.screen = screen;
         this.text = text;
+        this.letter = letter;
         this.viewport = viewport;
         this.bend = bend;
         this.textColor = textColor;
@@ -269,6 +311,7 @@
         this.container = container;
         this.scrollSpeed = scrollSpeed;
         this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
+        this.dragDistance = 0;
         this.createRenderer();
         this.createCamera();
         this.createScene();
@@ -295,15 +338,40 @@
       createGeometry() {
         this.planeGeometry = new Plane(this.gl, { heightSegments: 50, widthSegments: 100 });
       }
+
+      /* ================================================================= */
+      /* 4. LISTA DE FOTOS Y MENSAJES (¡EDITA AQUÍ TUS FOTOS Y CARTAS!)    */
+      /* ================================================================= */
       createMedias(items, bend, textColor, borderRadius) {
-const defaultItems = [
-  { image: './aesthetic sunflower wallpaper 💕 🌻 💫 .jpg', text: 'Flores Amarillas 💛' },
-  { image: './Descargar (1).jpg', text: 'Para Tina ✨' },
-  { image: './Descargar (2).jpg', text: 'Un Momento Especial 🌻' },
-  { image: './Descargar (3).jpg', text: 'Sonrisas 🌼' },
-  { image: './💫.jpg', text: 'Con Amor 💛' }
-];
+        
+        const defaultItems = [
+          { 
+            image: './aesthetic sunflower wallpaper 💕 🌻 💫 .jpg', 
+            text: 'Flores Amarillas 💛',
+            letter: 'Que este detalle de flores amarillas te recuerde lo especial que eres todos los días. 🌻' 
+          },
+          { 
+            image: './Descargar (1).jpg', 
+            text: 'Para Tina ✨',
+            letter: 'Tu sonrisa ilumina cualquier día gris. Gracias por estar siempre ahí. ❤️' 
+          },
+          { 
+            image: './Descargar (2).jpg', 
+            text: 'Un Momento Especial 🌻',
+            letter: 'Cada pequeño instante a tu lado se convierte en un gran recuerdo que guardo con cariño.' 
+          },
+          { 
+            image: './Descargar (3).jpg', 
+            text: 'Sonrisas 🌼',
+            letter: 'Nunca dejes de sonreír, tienes la energía más bonita del mundo.' 
+          },
+          { 
+            image: './💫.jpg', 
+            text: 'Con Amor 💛',
+            letter: 'Un pequeño espacio digital pensado especialmente para sacarte una sonrisa hoy.' 
+          }
         ];
+
         const galleryItems = items && items.length ? items : defaultItems;
         this.mediasImages = galleryItems.concat(galleryItems);
         this.medias = this.mediasImages.map((data, index) => new Media({
@@ -315,23 +383,55 @@ const defaultItems = [
           scene: this.scene,
           screen: this.screen,
           text: data.text,
+          letter: data.letter,
           viewport: this.viewport,
           bend,
           textColor,
           borderRadius
         }));
       }
+
+      /* Controles de arrastrar y clic */
       onTouchDown(e) {
         this.isDown = true;
         this.scroll.position = this.scroll.current;
         this.start = e.touches ? e.touches[0].clientX : e.clientX;
+        this.dragDistance = 0;
       }
       onTouchMove(e) {
         if (!this.isDown) return;
         const x = e.touches ? e.touches[0].clientX : e.clientX;
+        this.dragDistance += Math.abs(this.start - x);
         this.scroll.target = this.scroll.position + (this.start - x) * (this.scrollSpeed * 0.025);
       }
-      onTouchUp() { this.isDown = false; }
+      onTouchUp(e) { 
+        if (this.isDown && this.dragDistance < 10) {
+          this.handleClick(e);
+        }
+        this.isDown = false; 
+      }
+      handleClick(e) {
+        const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+        const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+
+        const x = (clientX / this.screen.width) * 2 - 1;
+        const y = -(clientY / this.screen.height) * 2 + 1;
+
+        let closest = null;
+        let minDistance = Infinity;
+
+        this.medias.forEach(media => {
+          const dist = Math.abs(media.plane.position.x - (x * (this.viewport.width / 2)));
+          if (dist < minDistance && dist < media.plane.scale.x / 1.5) {
+            minDistance = dist;
+            closest = media;
+          }
+        });
+
+        if (closest) {
+          openLetter(closest.text, closest.letter);
+        }
+      }
       onWheel(e) {
         const delta = e.deltaY || e.wheelDelta || e.detail;
         this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
@@ -369,6 +469,42 @@ const defaultItems = [
       }
     }
 
+
+    /* ================================================================= */
+    /* 5. ABRIR Y CERRAR LA VENTANA EMERGENTE                            */
+    /* ================================================================= */
+    const modal = document.getElementById('letter-modal');
+    const modalCard = document.getElementById('modal-card');
+    const closeBtn = document.getElementById('close-btn');
+    const cardTitle = document.getElementById('card-title');
+    const cardMessage = document.getElementById('card-message');
+
+    function openLetter(title, message) {
+      cardTitle.textContent = title;
+      cardMessage.textContent = message || "¡Un mensaje muy especial para ti!";
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modalCard.classList.remove('scale-95');
+        modalCard.classList.add('scale-100');
+      }, 10);
+    }
+
+    function closeLetter() {
+      modal.classList.add('opacity-0');
+      modalCard.classList.remove('scale-100');
+      modalCard.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    closeBtn.addEventListener('click', closeLetter);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeLetter();
+    });
+
+    /* Inicializar la aplicación */
     document.addEventListener('DOMContentLoaded', () => {
       const container = document.getElementById('gallery-container');
       container.classList.add('circular-gallery');
