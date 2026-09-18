@@ -344,34 +344,33 @@
       /* ================================================================= */
       createMedias(items, bend, textColor, borderRadius) {
         
-        const defaultItems = [
-          { 
-            image: './aesthetic sunflower wallpaper 💕 🌻 💫 .jpg', 
-            text: 'Flores Amarillas 💛',
-            letter: 'Que este detalle de flores amarillas te recuerde lo especial que eres todos los días. 🌻' 
-          },
-          { 
-            image: './Descargar (1).jpg', 
-            text: 'Para Tina ✨',
-            letter: 'Tu sonrisa ilumina cualquier día gris. Gracias por estar siempre ahí. ❤️' 
-          },
-          { 
-            image: './Descargar (2).jpg', 
-            text: 'Un Momento Especial 🌻',
-            letter: 'Cada pequeño instante a tu lado se convierte en un gran recuerdo que guardo con cariño.' 
-          },
-          { 
-            image: './Descargar (3).jpg', 
-            text: 'Sonrisas 🌼',
-            letter: 'Nunca dejes de sonreír, tienes la energía más bonita del mundo.' 
-          },
-          { 
-            image: './💫.jpg', 
-            text: 'Con Amor 💛',
-            letter: 'Un pequeño espacio digital pensado especialmente para sacarte una sonrisa hoy.' 
-          }
-        ];
-
+const defaultItems = [
+  { 
+    image: 'foto1.jpg', 
+    text: 'Flores Amarillas 💛',
+    letter: 'Que este detalle de flores amarillas te recuerde lo especial que eres todos los días. 🌻' 
+  },
+  { 
+    image: 'foto2.jpg', 
+    text: 'Para Tina ✨',
+    letter: 'Tu sonrisa ilumina cualquier día gris. Gracias por estar siempre ahí. ❤️' 
+  },
+  { 
+    image: 'foto3.jpg', 
+    text: 'Un Momento Especial 🌻',
+    letter: 'Cada pequeño instante a tu lado se convierte en un gran recuerdo que guardo con cariño.' 
+  },
+  { 
+    image: 'foto4.jpg', 
+    text: 'Sonrisas 🌼',
+    letter: 'Nunca dejes de sonreír, tienes la energía más bonita del mundo.' 
+  },
+  { 
+    image: 'foto5.jpg', 
+    text: 'Con Amor 💛',
+    letter: 'Un pequeño espacio digital pensado especialmente para sacarte una sonrisa hoy.' 
+  }
+];
         const galleryItems = items && items.length ? items : defaultItems;
         this.mediasImages = galleryItems.concat(galleryItems);
         this.medias = this.mediasImages.map((data, index) => new Media({
