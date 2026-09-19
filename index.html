@@ -62,6 +62,14 @@
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-between overflow-x-hidden font-sans select-none">
 
+  <!-- REPRODUCTOR DE MÚSICA DE FONDO -->
+  <audio id="bg-music" src="./musica.mp3" loop></audio>
+
+  <!-- BOTÓN FLOTANTE PARA MUTEAR/DESMUTEAR MÚSICA -->
+  <button id="btn-toggle-music" class="fixed bottom-4 right-4 z-50 bg-white/80 backdrop-blur-md border border-amber-400 text-amber-600 p-3 rounded-full shadow-lg hover:scale-110 transition-all flex items-center justify-center text-xl">
+    <span id="music-icon">🎵</span>
+  </button>
+
   <!-- 1. PANTALLA DE BIENVENIDA -->
   <div id="intro-screen" class="fixed inset-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center transition-opacity duration-700">
     <div class="bg-white border-[6px] border-amber-400 w-11/12 md:w-[60%] max-w-3xl rounded-[35px] p-6 md:p-10 shadow-2xl flex flex-col items-center relative">
@@ -82,7 +90,7 @@
         <img id="intro-img" src="./giftabrazandocorazon.gif" alt="Snoopy Regalo" class="w-full h-full object-contain" onerror="this.src='./portada.jpg'">
       </div>
 
-      <!-- DEDICATORIA CON ESTILO ELEGANTE -->
+      <!-- DEDICATORIA -->
       <div class="mb-5 px-4 max-w-md text-amber-600 font-handwriting text-2xl sm:text-3xl font-bold leading-snug drop-shadow-sm">
         Nicole Valentina Tapiero Galvis... <br>
         <span class="text-slate-800 text-xl sm:text-2xl font-semibold">Esto es especialmente para ti, te quiero mucho.</span> <br>
@@ -97,9 +105,15 @@
 
   <!-- 2. ENCABEZADO PRINCIPAL -->
   <header class="text-center pt-6 px-4 opacity-0 transition-opacity duration-700 flex flex-col items-center relative z-10" id="main-header">
-    <div class="bg-white/90 border-2 border-amber-400 px-10 py-4 rounded-3xl shadow-lg backdrop-blur-sm">
-      <h1 class="text-3xl md:text-5xl font-black text-amber-500">Flores Amarillas 🌻</h1>
-      <p class="text-slate-600 text-sm md:text-base mt-1 font-medium">Gira la ruleta y toca una foto para abrir su carta 💌</p>
+    <div class="bg-white/90 border-2 border-amber-400 px-6 sm:px-10 py-4 rounded-3xl shadow-lg backdrop-blur-sm flex flex-col sm:flex-row items-center gap-4">
+      <div>
+        <h1 class="text-3xl md:text-5xl font-black text-amber-500">Flores Amarillas 🌻</h1>
+        <p class="text-slate-600 text-sm md:text-base mt-1 font-medium">Gira la ruleta y toca una foto para abrir su carta 💌</p>
+      </div>
+      <!-- BOTÓN DE REGRESO A LA PORTADA -->
+      <button id="btn-back-home" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold py-2 px-4 rounded-full text-xs sm:text-sm border border-amber-300 transition-all hover:scale-105 flex items-center gap-1">
+        🏠 Inicio
+      </button>
     </div>
   </header>
 
@@ -132,7 +146,6 @@
 
       <!-- SOBRE ELEGANTE -->
       <div id="envelope-box" class="envelope-bg envelope-gold-border absolute w-[380px] sm:w-[500px] h-64 sm:h-72 rounded-b-3xl shadow-2xl flex items-center justify-center overflow-visible z-20">
-        <!-- Solapa Superior -->
         <div id="envelope-flap" class="envelope-flap envelope-flap-bg absolute top-0 left-0 w-full h-32 sm:h-36 rounded-t-xl z-25 flex items-center justify-center" style="clip-path: polygon(0 0, 50% 100%, 100% 0);">
           <div class="w-8 h-8 rounded-full bg-gradient-to-r from-amber-300 to-amber-500 border border-white shadow-md mb-8 flex items-center justify-center text-xs">🌻</div>
         </div>
@@ -142,11 +155,10 @@
 
     </div>
 
-    <!-- CONTENEDOR DE DECORACIONES -->
     <div id="decorations-container" class="fixed inset-0 pointer-events-none z-10"></div>
   </div>
 
-  <!-- SOBRE ANIMADO QUE VIAJA ENTRE RULETA Y CENTRO DE PANTALLA -->
+  <!-- SOBRE ANIMADO QUE VIAJA -->
   <div id="flying-envelope" class="envelope-bg envelope-gold-border fixed pointer-events-none z-[100] hidden w-[220px] h-36 rounded-b-2xl shadow-2xl overflow-visible flex items-center justify-center">
     <div class="envelope-flap envelope-flap-bg absolute top-0 left-0 w-full h-18 rounded-t-lg flex items-center justify-center" style="clip-path: polygon(0 0, 50% 100%, 100% 0);">
       <div class="w-5 h-5 rounded-full bg-gradient-to-r from-amber-300 to-amber-500 border border-white shadow-md mb-4 flex items-center justify-center text-[10px]">🌻</div>
@@ -156,6 +168,31 @@
 
   <!-- 4. LÓGICA JAVASCRIPT -->
   <script>
+    const bgMusic = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('btn-toggle-music');
+    const musicIcon = document.getElementById('music-icon');
+    let isPlaying = false;
+
+    function playAudio() {
+      bgMusic.volume = 0.4;
+      bgMusic.play().then(() => {
+        isPlaying = true;
+        musicIcon.textContent = '🎵';
+      }).catch(err => console.log('Audio autoplay blocked:', err));
+    }
+
+    musicBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        bgMusic.pause();
+        isPlaying = false;
+        musicIcon.textContent = '🔇';
+      } else {
+        bgMusic.play();
+        isPlaying = true;
+        musicIcon.textContent = '🎵';
+      }
+    });
+
     const MAIN_CARDS = [
       { img: './foto1.jpg', title: 'Flores Amarillas 💛', text: 'Que este detalle te recuerde lo especial que eres todos los días. 🌻' },
       { img: './foto2.jpg', title: 'Para Ti ✨', text: 'Tu sonrisa ilumina cualquier día gris. Gracias por estar siempre ahí. ❤️' },
@@ -188,11 +225,21 @@
     const mainRuleta = document.getElementById('main-ruleta');
 
     document.getElementById('btn-start').addEventListener('click', () => {
+      playAudio();
       introScreen.classList.add('opacity-0');
       setTimeout(() => {
         introScreen.classList.add('hidden');
         mainHeader.classList.remove('opacity-0');
       }, 700);
+    });
+
+    // ACCIÓN DEL BOTÓN REGRESAR A PORTADA
+    document.getElementById('btn-back-home').addEventListener('click', () => {
+      mainHeader.classList.add('opacity-0');
+      introScreen.classList.remove('hidden');
+      setTimeout(() => {
+        introScreen.classList.remove('opacity-0');
+      }, 50);
     });
 
     const container = document.getElementById('canvas-container');
