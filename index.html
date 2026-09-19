@@ -11,8 +11,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- Google Font Cursiva Elegante -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
+    .font-handwriting {
+      font-family: 'Dancing Script', cursive;
+    }
+
     .perspective-1000 { perspective: 1000px; }
     .envelope-flap {
       transform-origin: top;
@@ -56,25 +64,32 @@
 
   <!-- 1. PANTALLA DE BIENVENIDA -->
   <div id="intro-screen" class="fixed inset-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center transition-opacity duration-700">
-    <div class="bg-white border-[6px] border-amber-400 w-11/12 md:w-[60%] max-w-3xl rounded-[35px] p-6 md:p-12 shadow-2xl flex flex-col items-center relative">
-      <div class="relative flex flex-col items-center mb-4 w-full">
-        <img src="./snoopydormido2.png" alt="Snoopy Dormido" class="w-36 md:w-52 h-auto -mb-3 z-10 object-contain pointer-events-none">
-        <h2 class="text-3xl sm:text-4xl md:text-6xl font-extrabold text-amber-500 z-20 tracking-wide flex items-center justify-center gap-2 whitespace-nowrap text-center w-full">
+    <div class="bg-white border-[6px] border-amber-400 w-11/12 md:w-[60%] max-w-3xl rounded-[35px] p-6 md:p-10 shadow-2xl flex flex-col items-center relative">
+      <div class="relative flex flex-col items-center mb-2 w-full">
+        <img src="./snoopydormido2.png" alt="Snoopy Dormido" class="w-32 md:w-44 h-auto -mb-3 z-10 object-contain pointer-events-none">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-amber-500 z-20 tracking-wide flex items-center justify-center gap-2 whitespace-nowrap text-center w-full">
           <span>💛🌻</span>
           <span>Un Detalle Para Ti</span>
           <span>🌻💛</span>
         </h2>
       </div>
 
-      <p class="text-slate-700 font-semibold text-base md:text-lg leading-relaxed mb-6 max-w-lg text-center">
+      <p class="text-slate-700 font-semibold text-sm md:text-base leading-relaxed mb-4 max-w-lg text-center">
         🌻 Espero que te guste mucho este detallito, lo hice con todo el cariño del mundo solo para ti 🌻
       </p>
 
-      <div class="w-44 md:w-56 h-44 md:h-56 mb-6">
+      <div class="w-36 md:w-48 h-36 md:h-48 mb-4">
         <img id="intro-img" src="./giftabrazandocorazon.gif" alt="Snoopy Regalo" class="w-full h-full object-contain" onerror="this.src='./portada.jpg'">
       </div>
 
-      <button id="btn-start" class="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold py-4 px-10 rounded-full shadow-lg hover:scale-105 transition-all text-base md:text-lg flex items-center gap-2">
+      <!-- DEDICATORIA CON ESTILO ELEGANTE -->
+      <div class="mb-5 px-4 max-w-md text-amber-600 font-handwriting text-2xl sm:text-3xl font-bold leading-snug drop-shadow-sm">
+        Nicole Valentina Tapiero Galvis... <br>
+        <span class="text-slate-800 text-xl sm:text-2xl font-semibold">Esto es especialmente para ti, te quiero mucho.</span> <br>
+        <span class="text-amber-500 text-lg sm:text-xl italic font-sans font-medium">Att: Diego Diaz ✨</span>
+      </div>
+
+      <button id="btn-start" class="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold py-3.5 px-10 rounded-full shadow-lg hover:scale-105 transition-all text-base md:text-lg flex items-center gap-2">
         <span>Abrir mi regalo</span> ✨
       </button>
     </div>
@@ -93,7 +108,7 @@
     <div id="canvas-container" class="w-full h-[85vh] cursor-grab active:cursor-grabbing"></div>
   </main>
 
-  <footer class="text-center text-slate-400 text-xs py-3">De Diego Para Tina💛</footer>
+  <footer class="text-center text-slate-400 text-xs py-3">Creado con mucho amor 💛</footer>
 
   <!-- 3. MODAL DE CARTA Y SOBRE -->
   <div id="envelope-modal" class="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-500 overflow-hidden">
@@ -141,7 +156,6 @@
 
   <!-- 4. LÓGICA JAVASCRIPT -->
   <script>
-    // ARRAY CONFIGURADO CON LAS 9 CARTAS
     const MAIN_CARDS = [
       { img: './foto1.jpg', title: 'Flores Amarillas 💛', text: 'Que este detalle te recuerde lo especial que eres todos los días. 🌻' },
       { img: './foto2.jpg', title: 'Para Ti ✨', text: 'Tu sonrisa ilumina cualquier día gris. Gracias por estar siempre ahí. ❤️' },
@@ -202,7 +216,6 @@
     const group = new THREE.Group();
     scene.add(group);
 
-    // Radio ligeramente más amplio para acomodar 9 cartas fluidamente
     const radius = isMobile ? 3.4 : 4.5;
     const cards3D = [];
     let activeCardIndex = null;
