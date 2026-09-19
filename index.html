@@ -3,513 +3,479 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flores Amarillas - Galería Circular</title>
+  <title>Flores Amarillas 💛</title>
   
-  <!-- Librerías externas: TailwindCSS y OGL para el motor 3D -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/ogl"></script>
-  
-  <!-- Estilos de animación y cursor -->
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
   <style>
-    .circular-gallery {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      cursor: grab;
+    .perspective-1000 { perspective: 1000px; }
+    .envelope-flap {
+      transform-origin: top;
+      transition: transform 0.6s ease-in-out;
     }
-    .circular-gallery:active {
-      cursor: grabbing;
+    
+    .envelope-bg {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(251, 191, 36, 0.2);
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-10px) rotate(3deg); }
+    .envelope-gold-border {
+      border: 2px solid #fbbf24;
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
     }
-    .animate-float {
-      animation: float 4s ease-in-out infinite;
+    .envelope-flap-bg {
+      background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+      border-bottom: 2px solid #fbbf24;
+    }
+
+    .floating-card-decor {
+      position: fixed !important;
+      pointer-events: none;
+      z-index: 80;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.08));
+      animation: popIn 0.5s ease-out forwards, floatingMotion 3.5s ease-in-out infinite alternate 0.5s;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.1) rotate(-15deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    @keyframes floatingMotion {
+      0% { transform: translateY(0px) rotate(-5deg); }
+      50% { transform: translateY(-12px) rotate(5deg); }
+      100% { transform: translateY(10px) rotate(-3deg); }
     }
   </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between font-sans relative overflow-x-hidden">
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-between overflow-x-hidden font-sans select-none">
 
-  <!-- ================================================================= -->
-  <!-- 1. ENCABEZADO Y TÍTULOS (Cambia los textos de la pantalla aquí)  -->
-  <!-- ================================================================= -->
-  <header class="text-center pt-8 px-4 z-10">
-    <div class="animate-float inline-block mb-2">
-      <span class="text-6xl">🌻</span>
-    </div>
-    <h1 class="text-4xl md:text-5xl font-black text-amber-400 mb-2">
-      Flores Amarillas
-    </h1>
-    <p class="text-slate-400 text-sm md:text-base">
-      Arrastra para explorar. ¡Haz clic en una foto para leer una cartita! 💌
-    </p>
-  </header>
-
-  <!-- Contenedor donde renderiza la galería 3D -->
-  <main class="w-full flex-1 my-4">
-    <div id="gallery-container" style="height: 550px; position: relative;" class="w-full"></div>
-  </main>
-
-  <!-- Pie de página -->
-  <footer class="py-4 text-center text-slate-600 text-xs font-semibold">
-    Creado con React Bits 💛
-  </footer>
-
-
-  <!-- ================================================================= -->
-  <!-- 2. VENTANA EMERGENTE / MODAL DE LA CARTA                        -->
-  <!-- ================================================================= -->
-  <div id="letter-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-300 opacity-0">
-    <div class="bg-amber-50 text-slate-800 max-w-md w-full rounded-2xl p-6 md:p-8 shadow-2xl border-4 border-amber-300 relative transform scale-95 transition-transform duration-300" id="modal-card">
-      
-      <!-- Botón de cerrar (X) -->
-      <button id="close-btn" class="absolute top-3 right-4 text-slate-400 hover:text-slate-700 text-2xl font-bold">&times;</button>
-      
-      <!-- Icono y Título dentro de la carta -->
-      <div class="text-center mb-4">
-        <span class="text-4xl">💌</span>
-        <h2 id="card-title" class="text-2xl font-bold text-amber-700 mt-2">Para Tina</h2>
+  <!-- 1. PANTALLA DE BIENVENIDA -->
+  <div id="intro-screen" class="fixed inset-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center transition-opacity duration-700">
+    <div class="bg-white border-[6px] border-amber-400 w-11/12 md:w-[60%] max-w-3xl rounded-[35px] p-6 md:p-12 shadow-2xl flex flex-col items-center relative">
+      <div class="relative flex flex-col items-center mb-4 w-full">
+        <img src="./snoopydormido2.png" alt="Snoopy Dormido" class="w-36 md:w-52 h-auto -mb-3 z-10 object-contain pointer-events-none">
+        <h2 class="text-3xl sm:text-4xl md:text-6xl font-extrabold text-amber-500 z-20 tracking-wide flex items-center justify-center gap-2 whitespace-nowrap text-center w-full">
+          <span>💛🌻</span>
+          <span>Un Detalle Para Ti</span>
+          <span>🌻💛</span>
+        </h2>
       </div>
 
-      <!-- Texto del mensaje que cambia según la foto -->
-      <p id="card-message" class="text-slate-700 leading-relaxed text-center font-serif text-lg my-4">
-        Mensaje...
+      <p class="text-slate-700 font-semibold text-base md:text-lg leading-relaxed mb-6 max-w-lg text-center">
+        🌻 Espero que te guste mucho este detallito, lo hice con todo el cariño del mundo solo para ti 🌻
       </p>
 
-      <!-- Firma al pie de la carta -->
-      <div class="text-right mt-6">
-        <span class="text-amber-600 font-semibold italic text-sm">Con todo mi cariño 💛</span>
+      <div class="w-44 md:w-56 h-44 md:h-56 mb-6">
+        <img id="intro-img" src="./giftabrazandocorazon.gif" alt="Snoopy Regalo" class="w-full h-full object-contain" onerror="this.src='./portada.jpg'">
       </div>
 
+      <button id="btn-start" class="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold py-4 px-10 rounded-full shadow-lg hover:scale-105 transition-all text-base md:text-lg flex items-center gap-2">
+        <span>Abrir mi regalo</span> ✨
+      </button>
     </div>
   </div>
 
+  <!-- 2. ENCABEZADO PRINCIPAL -->
+  <header class="text-center pt-6 px-4 opacity-0 transition-opacity duration-700 flex flex-col items-center relative z-10" id="main-header">
+    <div class="bg-white/90 border-2 border-amber-400 px-10 py-4 rounded-3xl shadow-lg backdrop-blur-sm">
+      <h1 class="text-3xl md:text-5xl font-black text-amber-500">Flores Amarillas 🌻</h1>
+      <p class="text-slate-600 text-sm md:text-base mt-1 font-medium">Gira la ruleta y toca una foto para abrir su carta 💌</p>
+    </div>
+  </header>
 
-  <!-- ================================================================= -->
-  <!-- 3. CÓDIGO JAVASCRIPT (LÓGICA Y PROGRAMACIÓN DE LA GALERÍA)       -->
-  <!-- ================================================================= -->
+  <!-- CONTENEDOR RULETA 3D -->
+  <main id="main-ruleta" class="w-full flex-1 relative flex items-center justify-center transition-opacity duration-500">
+    <div id="canvas-container" class="w-full h-[85vh] cursor-grab active:cursor-grabbing"></div>
+  </main>
+
+  <footer class="text-center text-slate-400 text-xs py-3">De Diego Para Tina💛</footer>
+
+  <!-- 3. MODAL DE CARTA Y SOBRE -->
+  <div id="envelope-modal" class="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-500 overflow-hidden">
+    <div id="modal-wrapper" class="relative w-full max-w-2xl perspective-1000 flex flex-col items-center justify-center my-auto h-[500px]">
+      
+      <!-- CARTA CONTENIDO -->
+      <div id="letter-card" class="absolute w-[90%] sm:w-[460px] bg-white border-[6px] border-amber-400 rounded-[35px] p-6 shadow-2xl z-30 text-center flex flex-col items-center justify-between pointer-events-auto">
+        <div class="w-full h-60 sm:h-64 rounded-2xl border-2 border-amber-300 overflow-hidden mb-3 shadow-sm bg-amber-50 flex items-center justify-center p-2">
+          <img id="modal-img" src="" class="w-full h-full object-contain">
+        </div>
+
+        <div class="w-full flex flex-col items-center mb-3">
+          <h3 id="modal-title" class="text-2xl sm:text-3xl font-black text-amber-500 mb-1 tracking-wide"></h3>
+          <p id="modal-text" class="text-slate-700 font-semibold text-sm sm:text-base leading-relaxed max-h-20 overflow-y-auto px-2"></p>
+        </div>
+
+        <button id="btn-close-letter" class="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold py-3 px-8 rounded-full text-base shadow-md transition-transform hover:scale-105">
+          Guardar de nuevo ❤️
+        </button>
+      </div>
+
+      <!-- SOBRE ELEGANTE -->
+      <div id="envelope-box" class="envelope-bg envelope-gold-border absolute w-[380px] sm:w-[500px] h-64 sm:h-72 rounded-b-3xl shadow-2xl flex items-center justify-center overflow-visible z-20">
+        <!-- Solapa Superior -->
+        <div id="envelope-flap" class="envelope-flap envelope-flap-bg absolute top-0 left-0 w-full h-32 sm:h-36 rounded-t-xl z-25 flex items-center justify-center" style="clip-path: polygon(0 0, 50% 100%, 100% 0);">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-r from-amber-300 to-amber-500 border border-white shadow-md mb-8 flex items-center justify-center text-xs">🌻</div>
+        </div>
+
+        <div class="absolute inset-0 bg-slate-900/40 rounded-b-3xl z-10" style="clip-path: polygon(0 0, 50% 45%, 100% 0, 100% 100%, 0 100%);"></div>
+      </div>
+
+    </div>
+
+    <!-- CONTENEDOR DE DECORACIONES -->
+    <div id="decorations-container" class="fixed inset-0 pointer-events-none z-10"></div>
+  </div>
+
+  <!-- SOBRE ANIMADO QUE VIAJA ENTRE RULETA Y CENTRO DE PANTALLA -->
+  <div id="flying-envelope" class="envelope-bg envelope-gold-border fixed pointer-events-none z-[100] hidden w-[220px] h-36 rounded-b-2xl shadow-2xl overflow-visible flex items-center justify-center">
+    <div class="envelope-flap envelope-flap-bg absolute top-0 left-0 w-full h-18 rounded-t-lg flex items-center justify-center" style="clip-path: polygon(0 0, 50% 100%, 100% 0);">
+      <div class="w-5 h-5 rounded-full bg-gradient-to-r from-amber-300 to-amber-500 border border-white shadow-md mb-4 flex items-center justify-center text-[10px]">🌻</div>
+    </div>
+    <div class="absolute inset-0 bg-slate-900/40 rounded-b-2xl" style="clip-path: polygon(0 0, 50% 45%, 100% 0, 100% 100%, 0 100%);"></div>
+  </div>
+
+  <!-- 4. LÓGICA JAVASCRIPT -->
   <script>
-    const { Renderer, Camera, Transform, Plane, Mesh, Program, Texture } = OGL;
+    // ARRAY CONFIGURADO CON LAS 9 CARTAS
+    const MAIN_CARDS = [
+      { img: './foto1.jpg', title: 'Flores Amarillas 💛', text: 'Que este detalle te recuerde lo especial que eres todos los días. 🌻' },
+      { img: './foto2.jpg', title: 'Para Ti ✨', text: 'Tu sonrisa ilumina cualquier día gris. Gracias por estar siempre ahí. ❤️' },
+      { img: './foto3.jpg', title: 'Un Momento Especial 🌻', text: 'Cada pequeño instante a tu lado se convierte en un gran recuerdo.' },
+      { img: './foto4.jpg', title: 'Sonrisas 🌼', text: 'Nunca dejes de sonreír, tienes la energía más bonita del mundo.' },
+      { img: './foto5.jpg', title: 'Con Amor 💛', text: 'Un pequeño espacio digital pensado especialmente para ti.' },
+      { img: './foto6.jpg', title: 'Recuerdos Bonitos ✨', text: 'Gracias por cada momento compartido y por los que faltan por vivir.' },
+      { img: './foto7.jpg', title: 'Luz y Alegría 🌻', text: 'Que la vida siempre te regale miles de motivos para ser feliz.' },
+      { img: './foto8.jpg', title: 'Siempre Especial 🌼', text: 'Tu presencia hace que todo lugar sea más cálido y especial.' },
+      { img: './foto9.jpg', title: 'Para Siempre 💛', text: 'Un detalle sencillo hecho con un corazón enorme solo para ti.' }
+    ];
 
-    function lerp(p1, p2, t) {
-      return p1 + (p2 - p1) * t;
-    }
+    const ALL_OUTER_IMAGES = [
+      './complemento1.jpg',
+      './complemento2.jpg',
+      './complemento3.jpg',
+      './complemento4.jpg',
+      './complemento5.jpg',
+      './giftcorazon.gif',
+      './snoopy1.jpg',
+      './snoopy2.jpg',
+      './snoopy3.jpg',
+      './snoopy4.jpg',
+      './snoopy5.jpg',
+      './snoopydormido2.png'
+    ];
 
-    function createTextTexture(gl, text, font = 'bold 30px sans-serif', color = '#ffffff') {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      context.font = font;
-      const metrics = context.measureText(text);
-      const textWidth = Math.ceil(metrics.width);
-      const textHeight = 36;
-      canvas.width = textWidth + 20;
-      canvas.height = textHeight + 20;
-      context.font = font;
-      context.fillStyle = color;
-      context.textBaseline = 'middle';
-      context.textAlign = 'center';
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.fillText(text, canvas.width / 2, canvas.height / 2);
-      const texture = new Texture(gl, { generateMipmaps: false });
-      texture.image = canvas;
-      return { texture, width: canvas.width, height: canvas.height };
-    }
+    const introScreen = document.getElementById('intro-screen');
+    const mainHeader = document.getElementById('main-header');
+    const mainRuleta = document.getElementById('main-ruleta');
 
-    class Title {
-      constructor({ gl, plane, text, textColor = '#ffffff' }) {
-        this.gl = gl;
-        this.plane = plane;
-        this.text = text;
-        this.textColor = textColor;
-        this.createMesh();
-      }
-      createMesh() {
-        const { texture, width, height } = createTextTexture(this.gl, this.text, 'bold 30px sans-serif', this.textColor);
-        const geometry = new Plane(this.gl);
-        const program = new Program(this.gl, {
-          vertex: `
-            attribute vec3 position;
-            attribute vec2 uv;
-            uniform mat4 modelViewMatrix;
-            uniform mat4 projectionMatrix;
-            varying vec2 vUv;
-            void main() {
-              vUv = uv;
-              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-          `,
-          fragment: `
-            precision highp float;
-            uniform sampler2D tMap;
-            varying vec2 vUv;
-            void main() {
-              vec4 color = texture2D(tMap, vUv);
-              if (color.a < 0.1) discard;
-              gl_FragColor = color;
-            }
-          `,
-          uniforms: { tMap: { value: texture } },
-          transparent: true
-        });
-        this.mesh = new Mesh(this.gl, { geometry, program });
-        const aspect = width / height;
-        const textHeight = this.plane.scale.y * 0.15;
-        const textWidth = textHeight * aspect;
-        this.mesh.scale.set(textWidth, textHeight, 1);
-        this.mesh.position.y = -this.plane.scale.y * 0.5 - textHeight * 0.5 - 0.05;
-        this.mesh.setParent(this.plane);
-      }
-    }
-
-    class Media {
-      constructor({ geometry, gl, image, index, length, scene, screen, text, letter, viewport, bend, textColor, borderRadius = 0.05 }) {
-        this.extra = 0;
-        this.geometry = geometry;
-        this.gl = gl;
-        this.image = image;
-        this.index = index;
-        this.length = length;
-        this.scene = scene;
-        this.screen = screen;
-        this.text = text;
-        this.letter = letter;
-        this.viewport = viewport;
-        this.bend = bend;
-        this.textColor = textColor;
-        this.borderRadius = borderRadius;
-        this.createShader();
-        this.createMesh();
-        this.createTitle();
-        this.onResize();
-      }
-      createShader() {
-        const texture = new Texture(this.gl, { generateMipmaps: true });
-        this.program = new Program(this.gl, {
-          depthTest: false,
-          depthWrite: false,
-          vertex: `
-            precision highp float;
-            attribute vec3 position;
-            attribute vec2 uv;
-            uniform mat4 modelViewMatrix;
-            uniform mat4 projectionMatrix;
-            uniform float uTime;
-            uniform float uSpeed;
-            varying vec2 vUv;
-            void main() {
-              vUv = uv;
-              vec3 p = position;
-              p.z = (sin(p.x * 4.0 + uTime) * 1.5 + cos(p.y * 2.0 + uTime) * 1.5) * (0.1 + uSpeed * 0.5);
-              gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
-            }
-          `,
-          fragment: `
-            precision highp float;
-            uniform vec2 uImageSizes;
-            uniform vec2 uPlaneSizes;
-            uniform sampler2D tMap;
-            uniform float uBorderRadius;
-            varying vec2 vUv;
-            
-            float roundedBoxSDF(vec2 p, vec2 b, float r) {
-              vec2 d = abs(p) - b;
-              return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
-            }
-            
-            void main() {
-              vec2 ratio = vec2(
-                min((uPlaneSizes.x / uPlaneSizes.y) / (uImageSizes.x / uImageSizes.y), 1.0),
-                min((uPlaneSizes.y / uPlaneSizes.x) / (uImageSizes.y / uImageSizes.x), 1.0)
-              );
-              vec2 uv = vec2(
-                vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
-                vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
-              );
-              vec4 color = texture2D(tMap, uv);
-              float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
-              float alpha = 1.0 - smoothstep(-0.002, 0.002, d);
-              gl_FragColor = vec4(color.rgb, alpha);
-            }
-          `,
-          uniforms: {
-            tMap: { value: texture },
-            uPlaneSizes: { value: [0, 0] },
-            uImageSizes: { value: [0, 0] },
-            uSpeed: { value: 0 },
-            uTime: { value: 100 * Math.random() },
-            uBorderRadius: { value: this.borderRadius }
-          },
-          transparent: true
-        });
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = this.image;
-        img.onload = () => {
-          texture.image = img;
-          this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
-        };
-      }
-      createMesh() {
-        this.plane = new Mesh(this.gl, { geometry: this.geometry, program: this.program });
-        this.plane.setParent(this.scene);
-      }
-      createTitle() {
-        this.title = new Title({ gl: this.gl, plane: this.plane, text: this.text, textColor: this.textColor });
-      }
-      update(scroll, direction) {
-        this.plane.position.x = this.x - scroll.current - this.extra;
-        const x = this.plane.position.x;
-        const H = this.viewport.width / 2;
-
-        if (this.bend === 0) {
-          this.plane.position.y = 0;
-          this.plane.rotation.z = 0;
-        } else {
-          const B_abs = Math.abs(this.bend);
-          const R = (H * H + B_abs * B_abs) / (2 * B_abs);
-          const effectiveX = Math.min(Math.abs(x), H);
-          const arc = R - Math.sqrt(R * R - effectiveX * effectiveX);
-          this.plane.position.y = this.bend > 0 ? -arc : arc;
-          this.plane.rotation.z = (this.bend > 0 ? -1 : 1) * Math.sign(x) * Math.asin(effectiveX / R);
-        }
-
-        this.speed = scroll.current - scroll.last;
-        this.program.uniforms.uTime.value += 0.04;
-        this.program.uniforms.uSpeed.value = this.speed;
-
-        const planeOffset = this.plane.scale.x / 2;
-        const viewportOffset = this.viewport.width / 2;
-        this.isBefore = this.plane.position.x + planeOffset < -viewportOffset;
-        this.isAfter = this.plane.position.x - planeOffset > viewportOffset;
-        if (direction === 'right' && this.isBefore) {
-          this.extra -= this.widthTotal;
-          this.isBefore = this.isAfter = false;
-        }
-        if (direction === 'left' && this.isAfter) {
-          this.extra += this.widthTotal;
-          this.isBefore = this.isAfter = false;
-        }
-      }
-      onResize({ screen, viewport } = {}) {
-        if (screen) this.screen = screen;
-        if (viewport) this.viewport = viewport;
-        this.scale = this.screen.height / 1500;
-        this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
-        this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
-        this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
-        this.padding = 2;
-        this.width = this.plane.scale.x + this.padding;
-        this.widthTotal = this.width * this.length;
-        this.x = this.width * this.index;
-      }
-    }
-
-    class App {
-      constructor(container, { items, bend = 3, textColor = '#fbbf24', borderRadius = 0.05, scrollSpeed = 2, scrollEase = 0.05 } = {}) {
-        this.container = container;
-        this.scrollSpeed = scrollSpeed;
-        this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
-        this.dragDistance = 0;
-        this.createRenderer();
-        this.createCamera();
-        this.createScene();
-        this.onResize();
-        this.createGeometry();
-        this.createMedias(items, bend, textColor, borderRadius);
-        this.update();
-        this.addEventListeners();
-      }
-      createRenderer() {
-        this.renderer = new Renderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio || 1, 2) });
-        this.gl = this.renderer.gl;
-        this.gl.clearColor(0, 0, 0, 0);
-        this.container.appendChild(this.gl.canvas);
-      }
-      createCamera() {
-        this.camera = new Camera(this.gl);
-        this.camera.fov = 45;
-        this.camera.position.z = 20;
-      }
-      createScene() {
-        this.scene = new Transform();
-      }
-      createGeometry() {
-        this.planeGeometry = new Plane(this.gl, { heightSegments: 50, widthSegments: 100 });
-      }
-
-      /* ================================================================= */
-      /* 4. LISTA DE FOTOS Y MENSAJES (IMGUR + CORS PROXY)                  */
-      /* ================================================================= */
-      createMedias(items, bend, textColor, borderRadius) {
-        const defaultItems = [
-          { 
-            image: 'https://corsproxy.io/?https://i.imgur.com/v8pEGB1.jpeg', 
-            text: 'Flores Amarillas 💛',
-            letter: 'Que este detalle de flores amarillas te recuerde lo especial que eres todos los días. 🌻' 
-          },
-          { 
-            image: 'https://corsproxy.io/?https://i.imgur.com/rN5EwE4.jpeg', 
-            text: 'Para Tina ✨',
-            letter: 'Tu sonrisa ilumina cualquier día gris. Gracias por estar siempre ahí. ❤️' 
-          },
-          { 
-            image: 'https://corsproxy.io/?https://i.imgur.com/YwKqVbS.jpeg', 
-            text: 'Un Momento Especial 🌻',
-            letter: 'Cada pequeño instante a tu lado se convierte en un gran recuerdo que guardo con cariño.' 
-          },
-          { 
-            image: 'https://corsproxy.io/?https://i.imgur.com/tH7eNq2.jpeg', 
-            text: 'Sonrisas 🌼',
-            letter: 'Nunca dejes de sonreír, tienes la energía más bonita del mundo.' 
-          },
-          { 
-            image: 'https://corsproxy.io/?https://i.imgur.com/kP8k7yO.jpeg', 
-            text: 'Con Amor 💛',
-            letter: 'Un pequeño espacio digital pensado especialmente para sacarte una sonrisa hoy.' 
-          }
-        ];
-
-        const galleryItems = items && items.length ? items : defaultItems;
-        this.mediasImages = galleryItems.concat(galleryItems);
-        this.medias = this.mediasImages.map((data, index) => new Media({
-          geometry: this.planeGeometry,
-          gl: this.gl,
-          image: data.image,
-          index,
-          length: this.mediasImages.length,
-          scene: this.scene,
-          screen: this.screen,
-          text: data.text,
-          letter: data.letter,
-          viewport: this.viewport,
-          bend,
-          textColor,
-          borderRadius
-        }));
-      }
-
-      onTouchDown(e) {
-        this.isDown = true;
-        this.scroll.position = this.scroll.current;
-        this.start = e.touches ? e.touches[0].clientX : e.clientX;
-        this.dragDistance = 0;
-      }
-      onTouchMove(e) {
-        if (!this.isDown) return;
-        const x = e.touches ? e.touches[0].clientX : e.clientX;
-        this.dragDistance += Math.abs(this.start - x);
-        this.scroll.target = this.scroll.position + (this.start - x) * (this.scrollSpeed * 0.025);
-      }
-      onTouchUp(e) { 
-        if (this.isDown && this.dragDistance < 10) {
-          this.handleClick(e);
-        }
-        this.isDown = false; 
-      }
-      handleClick(e) {
-        const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-        const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
-
-        const x = (clientX / this.screen.width) * 2 - 1;
-        const y = -(clientY / this.screen.height) * 2 + 1;
-
-        let closest = null;
-        let minDistance = Infinity;
-
-        this.medias.forEach(media => {
-          const dist = Math.abs(media.plane.position.x - (x * (this.viewport.width / 2)));
-          if (dist < minDistance && dist < media.plane.scale.x / 1.5) {
-            minDistance = dist;
-            closest = media;
-          }
-        });
-
-        if (closest) {
-          openLetter(closest.text, closest.letter);
-        }
-      }
-      onWheel(e) {
-        const delta = e.deltaY || e.wheelDelta || e.detail;
-        this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
-      }
-      onResize() {
-        this.screen = { width: this.container.clientWidth, height: this.container.clientHeight };
-        this.renderer.setSize(this.screen.width, this.screen.height);
-        this.camera.perspective({ aspect: this.screen.width / this.screen.height });
-        const fov = (this.camera.fov * Math.PI) / 180;
-        const height = 2 * Math.tan(fov / 2) * this.camera.position.z;
-        this.viewport = { width: height * this.camera.aspect, height };
-        if (this.medias) {
-          this.medias.forEach(media => media.onResize({ screen: this.screen, viewport: this.viewport }));
-        }
-      }
-      update() {
-        this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
-        const direction = this.scroll.current > this.scroll.last ? 'right' : 'left';
-        if (this.medias) {
-          this.medias.forEach(media => media.update(this.scroll, direction));
-        }
-        this.renderer.render({ scene: this.scene, camera: this.camera });
-        this.scroll.last = this.scroll.current;
-        requestAnimationFrame(this.update.bind(this));
-      }
-      addEventListeners() {
-        window.addEventListener('resize', this.onResize.bind(this));
-        window.addEventListener('wheel', this.onWheel.bind(this));
-        window.addEventListener('mousedown', this.onTouchDown.bind(this));
-        window.addEventListener('mousemove', this.onTouchMove.bind(this));
-        window.addEventListener('mouseup', this.onTouchUp.bind(this));
-        window.addEventListener('touchstart', this.onTouchDown.bind(this));
-        window.addEventListener('touchmove', this.onTouchMove.bind(this));
-        window.addEventListener('touchend', this.onTouchUp.bind(this));
-      }
-    }
-
-    /* ================================================================= */
-    /* 5. ABRIR Y CERRAR LA VENTANA EMERGENTE                            */
-    /* ================================================================= */
-    const modal = document.getElementById('letter-modal');
-    const modalCard = document.getElementById('modal-card');
-    const closeBtn = document.getElementById('close-btn');
-    const cardTitle = document.getElementById('card-title');
-    const cardMessage = document.getElementById('card-message');
-
-    function openLetter(title, message) {
-      cardTitle.textContent = title;
-      cardMessage.textContent = message || "¡Un mensaje muy especial para ti!";
-      modal.classList.remove('hidden');
+    document.getElementById('btn-start').addEventListener('click', () => {
+      introScreen.classList.add('opacity-0');
       setTimeout(() => {
-        modal.classList.remove('opacity-0');
-        modalCard.classList.remove('scale-95');
-        modalCard.classList.add('scale-100');
-      }, 10);
-    }
-
-    function closeLetter() {
-      modal.classList.add('opacity-0');
-      modalCard.classList.remove('scale-100');
-      modalCard.classList.add('scale-95');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-      }, 300);
-    }
-
-    closeBtn.addEventListener('click', closeLetter);
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeLetter();
+        introScreen.classList.add('hidden');
+        mainHeader.classList.remove('opacity-0');
+      }, 700);
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const container = document.getElementById('gallery-container');
-      container.classList.add('circular-gallery');
-      new App(container, {
-        bend: 3,
-        textColor: '#fbbf24',
-        borderRadius: 0.05,
-        scrollSpeed: 2,
-        scrollEase: 0.05
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    
+    const isMobile = window.innerWidth < 768;
+    camera.position.set(0, 0, isMobile ? 9.8 : 8.2);
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+    scene.add(ambientLight);
+
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight1.position.set(5, 10, 7);
+    scene.add(dirLight1);
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    // Radio ligeramente más amplio para acomodar 9 cartas fluidamente
+    const radius = isMobile ? 3.4 : 4.5;
+    const cards3D = [];
+    let activeCardIndex = null;
+
+    function createCardTexture(imageSrc, callback) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 680;
+      const ctx = canvas.getContext('2d');
+
+      const img = new Image();
+      img.src = imageSrc;
+      img.onload = () => {
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.roundRect(0, 0, 512, 680, 32);
+        ctx.fill();
+
+        ctx.lineWidth = 16;
+        ctx.strokeStyle = '#fbbf24';
+        ctx.stroke();
+
+        ctx.drawImage(img, 32, 32, 448, 520);
+
+        ctx.fillStyle = '#f59e0b';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('💛🌻💛', 256, 620);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.encoding = THREE.sRGBEncoding;
+        callback(texture);
+      };
+    }
+
+    MAIN_CARDS.forEach((item, index) => {
+      const angle = (index / MAIN_CARDS.length) * Math.PI * 2;
+      const cardWidth = isMobile ? 1.1 : 1.4;
+      const cardHeight = isMobile ? 1.5 : 1.9;
+      const geometry = new THREE.PlaneGeometry(cardWidth, cardHeight);
+      
+      createCardTexture(item.img, (texture) => {
+        const material = new THREE.MeshBasicMaterial({ 
+          map: texture, 
+          side: THREE.DoubleSide 
+        });
+        
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.x = Math.sin(angle) * radius;
+        mesh.position.z = Math.cos(angle) * radius;
+        mesh.rotation.y = angle;
+        mesh.userData = { ...item, index, angle };
+        group.add(mesh);
+        cards3D.push(mesh);
       });
+    });
+
+    let isDragging = false;
+    let previousMouseX = 0;
+
+    container.addEventListener('mousedown', (e) => { isDragging = true; previousMouseX = e.clientX; });
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - previousMouseX;
+      group.rotation.y += deltaX * 0.005;
+      previousMouseX = e.clientX;
+    });
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    container.addEventListener('click', (e) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(cards3D);
+
+      if (intersects.length > 0) {
+        startOpeningSequence(intersects[0].object.userData, e.clientX, e.clientY);
+      }
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!isDragging) group.rotation.y += 0.0025;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    const modal = document.getElementById('envelope-modal');
+    const envelopeBox = document.getElementById('envelope-box');
+    const flap = document.getElementById('envelope-flap');
+    const letterCard = document.getElementById('letter-card');
+    const flyingEnvelope = document.getElementById('flying-envelope');
+
+    let currentSelectedData = null;
+
+    function startOpeningSequence(data, clickX, clickY) {
+      currentSelectedData = data;
+      activeCardIndex = data.index;
+
+      if (cards3D[activeCardIndex]) {
+        cards3D[activeCardIndex].visible = false;
+      }
+
+      document.getElementById('modal-img').src = data.img;
+      document.getElementById('modal-title').textContent = data.title;
+      document.getElementById('modal-text').textContent = data.text;
+
+      const startX = clickX - 110;
+      const startY = clickY - 70;
+      
+      flyingEnvelope.style.left = `${startX}px`;
+      flyingEnvelope.style.top = `${startY}px`;
+      flyingEnvelope.classList.remove('hidden');
+
+      const centerTargetX = window.innerWidth / 2 - 110;
+      const centerTargetY = window.innerHeight / 2 - 70;
+      const curveX = window.innerWidth * 0.7;
+      const curveY = window.innerHeight * 0.25;
+
+      gsap.timeline()
+        .to(flyingEnvelope, {
+          x: curveX - startX,
+          y: curveY - startY,
+          scale: 1.2,
+          rotation: 12,
+          duration: 0.5,
+          ease: "power1.out"
+        })
+        .to(flyingEnvelope, {
+          x: centerTargetX - startX,
+          y: centerTargetY - startY,
+          scale: 1.8,
+          rotation: 0,
+          duration: 0.6,
+          ease: "power2.inOut"
+        })
+        .call(() => {
+          flyingEnvelope.classList.add('hidden');
+          gsap.set(flyingEnvelope, { x: 0, y: 0, scale: 1, rotation: 0 });
+          openEnvelopeModal();
+        });
+    }
+
+    function openEnvelopeModal() {
+      mainRuleta.classList.add('opacity-0');
+      mainHeader.classList.add('opacity-0');
+      
+      gsap.set(envelopeBox, { y: 0, opacity: 1 });
+      gsap.set(letterCard, { y: 60, opacity: 0, scale: 0.95 });
+      gsap.set(flap, { rotateX: 0 });
+
+      setTimeout(() => {
+        mainRuleta.classList.add('hidden');
+        modal.classList.remove('hidden');
+        
+        gsap.timeline()
+          .to(modal, { opacity: 1, duration: 0.3 })
+          .to(flap, { rotateX: 180, duration: 0.55, ease: "power2.inOut" })
+          .to(letterCard, { y: 0, opacity: 1, scale: 1, duration: 0.65, ease: "back.out(1.2)" })
+          .to(envelopeBox, { y: window.innerHeight * 0.7, opacity: 0, duration: 0.8, ease: "power2.in" }, "-=0.3")
+          .call(() => {
+            renderOuterDecorations();
+          });
+      }, 200);
+    }
+
+    document.getElementById('btn-close-letter').addEventListener('click', () => {
+      clearDecorations();
+
+      gsap.timeline()
+        .to(envelopeBox, { y: 0, opacity: 1, duration: 0.65, ease: "power2.out" })
+        .to(letterCard, { y: 50, opacity: 0, duration: 0.5, ease: "power2.in" }, "-=0.3")
+        .to(flap, { rotateX: 0, duration: 0.45, ease: "power2.inOut" })
+        .to(modal, { opacity: 0, duration: 0.3 })
+        .call(() => {
+          modal.classList.add('hidden');
+          
+          mainRuleta.classList.remove('hidden');
+          mainRuleta.classList.remove('opacity-0');
+          mainHeader.classList.remove('opacity-0');
+
+          const startX = window.innerWidth / 2 - 110;
+          const startY = window.innerHeight / 2 - 70;
+          const curveX = window.innerWidth * 0.75;
+          const curveY = window.innerHeight * 0.2;
+          const endX = window.innerWidth / 2 - 110;
+          const endY = window.innerHeight / 2 - 70;
+
+          flyingEnvelope.style.left = `${startX}px`;
+          flyingEnvelope.style.top = `${startY}px`;
+          flyingEnvelope.classList.remove('hidden');
+
+          gsap.timeline()
+            .to(flyingEnvelope, {
+              x: curveX - startX,
+              y: curveY - startY,
+              scale: 1.1,
+              rotation: 10,
+              duration: 0.65,
+              ease: "sine.out"
+            })
+            .to(flyingEnvelope, {
+              x: endX - startX,
+              y: endY - startY,
+              scale: 0.4,
+              rotation: 0,
+              opacity: 0,
+              duration: 0.6,
+              ease: "sine.inOut"
+            })
+            .call(() => {
+              flyingEnvelope.classList.add('hidden');
+              gsap.set(flyingEnvelope, { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 });
+              
+              if (cards3D[activeCardIndex]) {
+                cards3D[activeCardIndex].visible = true;
+              }
+            });
+        });
+    });
+
+    function renderOuterDecorations() {
+      clearDecorations();
+      const container = document.getElementById('decorations-container');
+      
+      const positions = [
+        { top: '3vh', left: '3vw' },
+        { top: '4vh', left: '22vw' },
+        { top: '3vh', right: '22vw' },
+        { top: '3vh', right: '3vw' },
+        { top: '32vh', left: '2vw' },
+        { top: '32vh', right: '2vw' },
+        { top: '58vh', left: '3vw' },
+        { top: '58vh', right: '3vw' },
+        { bottom: '4vh', left: '3vw' },
+        { bottom: '3vh', left: '22vw' },
+        { bottom: '3vh', right: '22vw' },
+        { bottom: '4vh', right: '3vw' }
+      ];
+
+      ALL_OUTER_IMAGES.forEach((src, idx) => {
+        if (idx >= positions.length) return;
+        const pos = positions[idx];
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'floating-card-decor w-28 h-28 sm:w-36 sm:h-36 object-contain';
+        
+        if (pos.top) img.style.top = pos.top;
+        if (pos.bottom) img.style.bottom = pos.bottom;
+        if (pos.left) img.style.left = pos.left;
+        if (pos.right) img.style.right = pos.right;
+        
+        img.style.animationDelay = `${idx * 0.05}s, ${0.4 + idx * 0.05}s`;
+
+        container.appendChild(img);
+      });
+    }
+
+    function clearDecorations() {
+      const container = document.getElementById('decorations-container');
+      container.innerHTML = '';
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
     });
   </script>
 </body>
